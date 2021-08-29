@@ -2,7 +2,6 @@
     CREATING TABLES COUNTRY, CITY, AND ADDRESS
 */
 
-
 CREATE TABLE COUNTRY
 (
     country_code NUMBER GENERATED ALWAYS AS IDENTITY,
@@ -28,5 +27,129 @@ CREATE TABLE ADDRESS
     CONSTRAINT address_pk PRIMARY KEY (address_code),
     CONSTRAINT fk_city
         FOREIGN KEY (fk_city_code) REFERENCES CITY (city_code)
+
+);
+
+CREATE TABLE STORE
+(
+    store_code      NUMBER GENERATED ALWAYS AS IDENTITY,
+    store_name      VARCHAR2(30) NOT NULL,
+    fk_address_code NUMBER       NOT NULL,
+    CONSTRAINT fk_address
+        FOREIGN KEY (fk_address_code) REFERENCES ADDRESS (address_code)
+);
+
+CREATE TABLE CLIENT
+(
+    client_code         NUMBER GENERATED ALWAYS AS IDENTITY,
+    client_name         VARCHAR2(50) NOT NULL,
+    client_zip_code     NUMBER       NOT NULL,
+    client_email        VARCHAR2(50),
+    register_date       timestamp,
+    client_state        VARCHAR2(30),
+    address_code        NUMBER       NOT NULL,
+    favorite_store_code NUMBER       NOT NULL,
+    CONSTRAINT fk_address_code
+        FOREIGN KEY (address_code) REFERENCES ADDRESS (address_code),
+    CONSTRAINT fk_favorite_store_code
+        FOREIGN KEY (favorite_store_code) REFERENCES STORE (store_code)
+);
+
+
+-- ---------------------------------
+CREATE TABLE CLASSIFICATION
+(
+    classification_code NUMBER GENERATED ALWAYS AS IDENTITY,
+    classification_name VARCHAR2(30),
+    CONSTRAINT classification_code_pk PRIMARY KEY (classification_code)
+);
+
+CREATE TABLE CATEGORY
+(
+    category_code NUMBER GENERATED ALWAYS AS IDENTITY,
+    category_name VARCHAR2(30) NOT NULL,
+    CONSTRAINT category_code_pk PRIMARY KEY (category_code)
+);
+
+CREATE TABLE LANGUAGE
+(
+    language_code NUMBER GENERATED ALWAYS AS IDENTITY,
+    language_name VARCHAR2(30) NOT NULL,
+    CONSTRAINT language_code_pk PRIMARY KEY (language_code)
+);
+
+SELECT MOVIE_NAME, MOVIE_DESCRIPTION, MOVIE_DURATION, RELEASE_YEAR, RENT_DAYS, RENT_COST, COST_PER_DAMAGE
+FROM TEMPORAL_TABLE;
+
+CREATE TABLE ACTOR
+(
+    actor_code NUMBER GENERATED ALWAYS AS IDENTITY,
+    actor_name VARCHAR2(30) NOT NULL,
+    CONSTRAINT actor_code PRIMARY KEY (actor_code)
+);
+
+CREATE TABLE MOVIE
+(
+    movie_code         NUMBER GENERATED ALWAYS AS IDENTITY,
+    movie_name         VARCHAR2(30),
+    movie_description  VARCHAR2(30),
+    movie_duration     NUMBER NOT NULL,
+    release_year       NUMBER NOT NULL,
+    rent_time          NUMBER NOT NULL,
+    penalty_cost       NUMBER,
+    quantity_available NUMBER,
+    fk_classification  NUMBER,
+    category_code      NUMBER NOT NULL,
+    language_code      NUMBER NOT NULL,
+    CONSTRAINT movie_code_pk PRIMARY KEY (movie_code),
+    CONSTRAINT fk_category
+        FOREIGN KEY (category_code) REFERENCES CATEGORY (category_code),
+    CONSTRAINT fk_language
+        FOREIGN KEY (language_code) REFERENCES LANGUAGE (language_code)
+);
+
+
+-- ---------------------------
+
+CREATE TABLE EMPLOYEE
+(
+    employee_code     NUMBER GENERATED ALWAYS AS IDENTITY,
+    employee_name     VARCHAR2(30) NOT NULL,
+    employee_address  VARCHAR2(50) NOT NULL,
+    employee_zip_code NUMBER,
+    employee_email    VARCHAR2(50) NOT NULL,
+    employee_state    VARCHAR2(50) NOT NULL,
+    employee_password VARCHAR2(50) NOT NULL,
+    store_code        NUMBER       NOT NULL,
+    CONSTRAINT employee_code_pk PRIMARY KEY (employee_code),
+    CONSTRAINT fk_store_code
+        FOREIGN KEY (store_code) REFERENCES STORE (store_code)
+);
+
+
+--- RENT BILL
+CREATE TABLE RENTAL_BILL
+(
+    rental_code   NUMBER GENERATED ALWAYS AS IDENTITY,
+    rent_date     VARCHAR2(50) NOT NULL,
+    pay_date      VARCHAR2(50) NOT NULL,
+    client_code   NUMBER       NOT NULL,
+    employee_code NUMBER       NOT NULL,
+    CONSTRAINT rent_code_ok PRIMARY KEY (rental_code),
+    CONSTRAINT fk_employee_code
+        FOREIGN KEY (employee_code) REFERENCES EMPLOYEE (employee_code)
+);
+
+-- MASTER - DETAIL BILL
+CREATE TABLE MASTER_DETAIL_BILL
+(
+    rental_code NUMBER NOT NULL,
+    movie_code  NUMBER NOT NULL,
+    return_date VARCHAR2(20),
+    rent_cost   NUMBER NOT NULL,
+    CONSTRAINT rental_code_fk
+        FOREIGN KEY (rental_code) REFERENCES RENTAL_BILL (rental_code),
+    CONSTRAINT movie_code_fk
+        FOREIGN KEY (movie_code) REFERENCES MOVIE (movie_code)
 
 );
