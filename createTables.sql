@@ -5,7 +5,7 @@
 CREATE TABLE COUNTRY
 (
     country_code NUMBER GENERATED ALWAYS AS IDENTITY,
-    country_name VARCHAR2(30) NOT NULL,
+    country_name VARCHAR2(150) NOT NULL,
     CONSTRAINT country_pk PRIMARY KEY (country_code)
 );
 
@@ -33,11 +33,13 @@ CREATE TABLE ADDRESS
 CREATE TABLE STORE
 (
     store_code      NUMBER GENERATED ALWAYS AS IDENTITY,
-    store_name      VARCHAR2(30) NOT NULL,
-    fk_address_code NUMBER       NOT NULL,
+    store_name      VARCHAR2(150) NOT NULL,
+    fk_address_code NUMBER        NOT NULL,
+    CONSTRAINT store_pk PRIMARY KEY (store_code),
     CONSTRAINT fk_address
         FOREIGN KEY (fk_address_code) REFERENCES ADDRESS (address_code)
 );
+
 
 CREATE TABLE CLIENT
 (
@@ -45,10 +47,11 @@ CREATE TABLE CLIENT
     client_name         VARCHAR2(50) NOT NULL,
     client_zip_code     NUMBER       NOT NULL,
     client_email        VARCHAR2(50),
-    register_date       timestamp,
+    register_date       DATE,
     client_state        VARCHAR2(30),
     address_code        NUMBER       NOT NULL,
     favorite_store_code NUMBER       NOT NULL,
+    CONSTRAINT client_pk PRIMARY KEY (client_code),
     CONSTRAINT fk_address_code
         FOREIGN KEY (address_code) REFERENCES ADDRESS (address_code),
     CONSTRAINT fk_favorite_store_code
@@ -90,17 +93,16 @@ CREATE TABLE ACTOR
 
 CREATE TABLE MOVIE
 (
-    movie_code         NUMBER GENERATED ALWAYS AS IDENTITY,
-    movie_name         VARCHAR2(30),
-    movie_description  VARCHAR2(30),
-    movie_duration     NUMBER NOT NULL,
-    release_year       NUMBER NOT NULL,
-    rent_time          NUMBER NOT NULL,
-    penalty_cost       NUMBER,
-    quantity_available NUMBER,
-    fk_classification  NUMBER,
-    category_code      NUMBER NOT NULL,
-    language_code      NUMBER NOT NULL,
+    movie_code        NUMBER GENERATED ALWAYS AS IDENTITY,
+    movie_name        VARCHAR2(30),
+    movie_description VARCHAR2(30),
+    movie_duration    NUMBER NOT NULL,
+    release_year      NUMBER NOT NULL,
+    rent_time         NUMBER NOT NULL,
+    penalty_cost      NUMBER,
+    fk_classification NUMBER,
+    category_code     NUMBER NOT NULL,
+    language_code     NUMBER NOT NULL,
     CONSTRAINT movie_code_pk PRIMARY KEY (movie_code),
     CONSTRAINT fk_category
         FOREIGN KEY (category_code) REFERENCES CATEGORY (category_code),
@@ -108,6 +110,25 @@ CREATE TABLE MOVIE
         FOREIGN KEY (language_code) REFERENCES LANGUAGE (language_code)
 );
 
+CREATE TABLE MOVIE_DETAIL
+(
+    movie_code NUMBER NOT NULL,
+    actor_code NUMBER NOT NULL,
+    CONSTRAINT fk_movie
+        FOREIGN KEY (movie_code) REFERENCES MOVIE (movie_code),
+    CONSTRAINT fk_actor
+        FOREIGN KEY (actor_code) REFERENCES ACTOR (actor_code)
+);
+
+CREATE TABLE STORE_INVENTORY
+(
+    movie_code NUMBER NOT NULL,
+    store_code NUMBER NOT NULL,
+    CONSTRAINT fk_movie
+        FOREIGN KEY (movie_code) REFERENCES MOVIE (movie_code),
+    CONSTRAINT fk_store
+        FOREIGN KEY (store_code) REFERENCES STORE (store_code)
+);
 
 -- ---------------------------
 
@@ -151,5 +172,6 @@ CREATE TABLE MASTER_DETAIL_BILL
         FOREIGN KEY (rental_code) REFERENCES RENTAL_BILL (rental_code),
     CONSTRAINT movie_code_fk
         FOREIGN KEY (movie_code) REFERENCES MOVIE (movie_code)
-
 );
+
+
