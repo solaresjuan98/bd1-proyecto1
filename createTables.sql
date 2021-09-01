@@ -81,34 +81,38 @@ CREATE TABLE LANGUAGE
     CONSTRAINT language_code_pk PRIMARY KEY (language_code)
 );
 
-SELECT MOVIE_NAME, MOVIE_DESCRIPTION, MOVIE_DURATION, RELEASE_YEAR, RENT_DAYS, RENT_COST, COST_PER_DAMAGE
-FROM TEMPORAL_TABLE;
 
 CREATE TABLE ACTOR
 (
     actor_code NUMBER GENERATED ALWAYS AS IDENTITY,
-    actor_name VARCHAR2(30) NOT NULL,
+    actor_name VARCHAR2(50) NOT NULL,
     CONSTRAINT actor_code PRIMARY KEY (actor_code)
 );
 
 CREATE TABLE MOVIE
 (
-    movie_code        NUMBER GENERATED ALWAYS AS IDENTITY,
-    movie_name        VARCHAR2(30),
-    movie_description VARCHAR2(30),
-    movie_duration    NUMBER NOT NULL,
-    release_year      NUMBER NOT NULL,
-    rent_time         NUMBER NOT NULL,
-    penalty_cost      NUMBER,
-    fk_classification NUMBER,
-    category_code     NUMBER NOT NULL,
-    language_code     NUMBER NOT NULL,
+    movie_code          NUMBER GENERATED ALWAYS AS IDENTITY,
+    movie_title         VARCHAR2(30),
+    movie_description   VARCHAR2(250),
+    movie_duration      NUMBER NOT NULL,
+    release_year        NUMBER NOT NULL,
+    rent_time           NUMBER NOT NULL,
+    rent_cost           NUMBER NOT NULL,
+    penalty_cost        NUMBER,
+    classification_code NUMBER NOT NULL,
+    category_code       NUMBER NOT NULL,
+    language_code       NUMBER NOT NULL,
     CONSTRAINT movie_code_pk PRIMARY KEY (movie_code),
+    CONSTRAINT fk_classification
+        FOREIGN KEY (classification_code) REFERENCES CLASSIFICATION (classification_code),
     CONSTRAINT fk_category
         FOREIGN KEY (category_code) REFERENCES CATEGORY (category_code),
     CONSTRAINT fk_language
         FOREIGN KEY (language_code) REFERENCES LANGUAGE (language_code)
 );
+
+ALTER TABLE MOVIE
+    MODIFY movie_description varchar2(250);
 
 CREATE TABLE MOVIE_DETAIL
 (
@@ -122,11 +126,12 @@ CREATE TABLE MOVIE_DETAIL
 
 CREATE TABLE STORE_INVENTORY
 (
-    movie_code NUMBER NOT NULL,
-    store_code NUMBER NOT NULL,
-    CONSTRAINT fk_movie
+    movie_code          NUMBER NOT NULL,
+    store_code          NUMBER NOT NULL,
+    available_inventory NUMBER NOT NULL,
+    CONSTRAINT fk_movie_inv
         FOREIGN KEY (movie_code) REFERENCES MOVIE (movie_code),
-    CONSTRAINT fk_store
+    CONSTRAINT fk_store_inv
         FOREIGN KEY (store_code) REFERENCES STORE (store_code)
 );
 
@@ -135,11 +140,12 @@ CREATE TABLE STORE_INVENTORY
 CREATE TABLE EMPLOYEE
 (
     employee_code     NUMBER GENERATED ALWAYS AS IDENTITY,
-    employee_name     VARCHAR2(30) NOT NULL,
+    employee_name     VARCHAR2(50) NOT NULL,
     employee_address  VARCHAR2(50) NOT NULL,
     employee_zip_code NUMBER,
     employee_email    VARCHAR2(50) NOT NULL,
     employee_state    VARCHAR2(50) NOT NULL,
+    employee_username VARCHAR2(50) NOT NULL,
     employee_password VARCHAR2(50) NOT NULL,
     store_code        NUMBER       NOT NULL,
     CONSTRAINT employee_code_pk PRIMARY KEY (employee_code),
