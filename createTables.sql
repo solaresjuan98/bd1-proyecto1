@@ -142,7 +142,6 @@ CREATE TABLE EMPLOYEE
     employee_code     NUMBER GENERATED ALWAYS AS IDENTITY,
     employee_name     VARCHAR2(50) NOT NULL,
     employee_address  VARCHAR2(50) NOT NULL,
-    employee_zip_code NUMBER,
     employee_email    VARCHAR2(50) NOT NULL,
     employee_state    VARCHAR2(50) NOT NULL,
     employee_username VARCHAR2(50) NOT NULL,
@@ -153,16 +152,15 @@ CREATE TABLE EMPLOYEE
         FOREIGN KEY (store_code) REFERENCES STORE (store_code)
 );
 
-
 --- RENT BILL
 CREATE TABLE RENTAL_BILL
 (
     rental_code   NUMBER GENERATED ALWAYS AS IDENTITY,
-    rent_date     VARCHAR2(50) NOT NULL,
+    rental_date   VARCHAR2(50) NOT NULL,
     pay_date      VARCHAR2(50) NOT NULL,
     client_code   NUMBER       NOT NULL,
     employee_code NUMBER       NOT NULL,
-    CONSTRAINT rent_code_ok PRIMARY KEY (rental_code),
+    CONSTRAINT rent_code_pk PRIMARY KEY (rental_code),
     CONSTRAINT fk_employee_code
         FOREIGN KEY (employee_code) REFERENCES EMPLOYEE (employee_code)
 );
