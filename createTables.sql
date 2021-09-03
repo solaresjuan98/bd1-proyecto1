@@ -44,7 +44,8 @@ CREATE TABLE STORE
 CREATE TABLE CLIENT
 (
     client_code         NUMBER GENERATED ALWAYS AS IDENTITY,
-    client_name         VARCHAR2(50) NOT NULL,
+    client_first_name   VARCHAR2(50) NOT NULL,
+    client_last_name    VARCHAR2(50) NOT NULL,
     client_zip_code     NUMBER       NOT NULL,
     client_email        VARCHAR2(50),
     register_date       DATE,
@@ -84,8 +85,9 @@ CREATE TABLE LANGUAGE
 
 CREATE TABLE ACTOR
 (
-    actor_code NUMBER GENERATED ALWAYS AS IDENTITY,
-    actor_name VARCHAR2(50) NOT NULL,
+    actor_code       NUMBER GENERATED ALWAYS AS IDENTITY,
+    actor_first_name VARCHAR2(50) NOT NULL,
+    actor_last_name  VARCHAR2(50) NOT NULL,
     CONSTRAINT actor_code PRIMARY KEY (actor_code)
 );
 
@@ -139,14 +141,15 @@ CREATE TABLE STORE_INVENTORY
 
 CREATE TABLE EMPLOYEE
 (
-    employee_code     NUMBER GENERATED ALWAYS AS IDENTITY,
-    employee_name     VARCHAR2(50) NOT NULL,
-    employee_address  VARCHAR2(50) NOT NULL,
-    employee_email    VARCHAR2(50) NOT NULL,
-    employee_state    VARCHAR2(50) NOT NULL,
-    employee_username VARCHAR2(50) NOT NULL,
-    employee_password VARCHAR2(50) NOT NULL,
-    store_code        NUMBER       NOT NULL,
+    employee_code       NUMBER GENERATED ALWAYS AS IDENTITY,
+    employee_first_name VARCHAR2(50) NOT NULL,
+    employee_last_name  VARCHAR2(50) NOT NULL,
+    employee_address    VARCHAR2(50) NOT NULL,
+    employee_email      VARCHAR2(50) NOT NULL,
+    employee_state      VARCHAR2(50) NOT NULL,
+    employee_username   VARCHAR2(50) NOT NULL,
+    employee_password   VARCHAR2(50) NOT NULL,
+    store_code          NUMBER       NOT NULL,
     CONSTRAINT employee_code_pk PRIMARY KEY (employee_code),
     CONSTRAINT fk_store_code
         FOREIGN KEY (store_code) REFERENCES STORE (store_code)
@@ -156,26 +159,29 @@ CREATE TABLE EMPLOYEE
 CREATE TABLE RENTAL_BILL
 (
     rental_code   NUMBER GENERATED ALWAYS AS IDENTITY,
-    rental_date   VARCHAR2(50) NOT NULL,
-    pay_date      VARCHAR2(50) NOT NULL,
-    client_code   NUMBER       NOT NULL,
-    employee_code NUMBER       NOT NULL,
-    CONSTRAINT rent_code_pk PRIMARY KEY (rental_code),
-    CONSTRAINT fk_employee_code
+    rental_date   DATE   NOT NULL,
+    pay_date      DATE   NOT NULL,
+    client_code   NUMBER NOT NULL,
+    employee_code NUMBER NOT NULL,
+    CONSTRAINT rental_bill_code_pk PRIMARY KEY (rental_code),
+    CONSTRAINT fk_bill_client_code
+        FOREIGN KEY (client_code) REFERENCES CLIENT (client_code),
+    CONSTRAINT fk_bill_employee_code
         FOREIGN KEY (employee_code) REFERENCES EMPLOYEE (employee_code)
 );
 
 -- MASTER - DETAIL BILL
-CREATE TABLE MASTER_DETAIL_BILL
+CREATE TABLE DETAIL_BILL
 (
     rental_code NUMBER NOT NULL,
     movie_code  NUMBER NOT NULL,
-    return_date VARCHAR2(20),
+    return_date DATE,
     rent_cost   NUMBER NOT NULL,
     CONSTRAINT rental_code_fk
         FOREIGN KEY (rental_code) REFERENCES RENTAL_BILL (rental_code),
     CONSTRAINT movie_code_fk
         FOREIGN KEY (movie_code) REFERENCES MOVIE (movie_code)
 );
+
 
 
