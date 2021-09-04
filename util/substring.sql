@@ -12,3 +12,9 @@ SELECT (SELECT REGEXP_SUBSTR(CLIENT_NAME, '[^ ]+', 1, 1)
     (SELECT REGEXP_SUBSTR(CLIENT_NAME, '[^ ]+', 1, 2)
     FROM DUAL) AS APELLIDO
 FROM CLIENT;
+
+
+-- specific subrstring in a string
+select INSTR('sonso', 'son') as subcadena
+from dual;
+
