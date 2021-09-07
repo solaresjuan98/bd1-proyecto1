@@ -114,7 +114,21 @@ CREATE TABLE MOVIE
 );
 
 ALTER TABLE MOVIE
+    DROP COLUMN category_code;
+
+ALTER TABLE MOVIE
     MODIFY movie_description varchar2(250);
+
+CREATE TABLE CATEGORY_DETAIL
+(
+    movie_code    NUMBER NOT NULL,
+    category_code NUMBER NOT NULL,
+    CONSTRAINT fk_movie_cat_detail
+        FOREIGN KEY (movie_code) REFERENCES MOVIE (movie_code),
+    CONSTRAINT fk_category_cat_detail
+        FOREIGN KEY (category_code) REFERENCES CATEGORY (category_code)
+);
+
 
 CREATE TABLE MOVIE_DETAIL
 (
