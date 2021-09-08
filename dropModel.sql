@@ -66,9 +66,11 @@
 
 
 -- drop model
---drop table DETAIL_BILL;
---drop table RENTAL_BILL;
---drop table CLIENT;
---drop table EMPLOYEE;
---drop table MOVIE_DETAIL;
---drop table ACTOR;
+drop table DETAIL_BILL;
+drop table RENTAL_BILL;
+drop table CLIENT;
+drop table EMPLOYEE;
+drop table MOVIE_DETAIL;
+drop table ACTOR;
+
+select * from ALL_TABLES where OWNER = 'BASES1P1' order by TABLE_NAME;
