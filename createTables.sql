@@ -19,6 +19,7 @@ CREATE TABLE CITY
         FOREIGN KEY (fk_country_code) REFERENCES COUNTRY (country_code)
 );
 
+-- OPTIONS
 CREATE TABLE ADDRESS
 (
     address_code NUMBER GENERATED ALWAYS AS IDENTITY,
@@ -32,33 +33,37 @@ CREATE TABLE ADDRESS
 
 CREATE TABLE STORE
 (
-    store_code      NUMBER GENERATED ALWAYS AS IDENTITY,
-    store_name      VARCHAR2(150) NOT NULL,
-    fk_address_code NUMBER        NOT NULL,
+    store_code    NUMBER GENERATED ALWAYS AS IDENTITY,
+    store_name    VARCHAR2(150) NOT NULL,
+    store_address VARCHAR2(200) NOT NULL,
+    city_code     NUMBER        NOT NULL,
     CONSTRAINT store_pk PRIMARY KEY (store_code),
-    CONSTRAINT fk_address
-        FOREIGN KEY (fk_address_code) REFERENCES ADDRESS (address_code)
+    CONSTRAINT fk_city
+        FOREIGN KEY (city_code) REFERENCES CITY (city_code)
 );
 
 
 CREATE TABLE CLIENT
 (
-    client_code         NUMBER GENERATED ALWAYS AS IDENTITY,
-    client_first_name   VARCHAR2(50) NOT NULL,
-    client_last_name    VARCHAR2(50) NOT NULL,
-    client_zip_code     NUMBER       NOT NULL,
+    client_code         NUMBER GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
+    client_first_name   VARCHAR2(50)  NOT NULL,
+    client_last_name    VARCHAR2(50)  NOT NULL,
+    client_zip_code     NUMBER        NOT NULL,
     client_email        VARCHAR2(50),
     register_date       DATE,
     client_state        VARCHAR2(30),
-    address_code        NUMBER       NOT NULL,
-    favorite_store_code NUMBER       NOT NULL,
+    client_address      VARCHAR2(100) NOT NULL,
+    client_city_code    NUMBER        NOT NULL,
+    favorite_store_code NUMBER        NOT NULL,
     CONSTRAINT client_pk PRIMARY KEY (client_code),
-    CONSTRAINT fk_address_code
-        FOREIGN KEY (address_code) REFERENCES ADDRESS (address_code),
+    CONSTRAINT fk_client_city_code
+        FOREIGN KEY (client_city_code) REFERENCES CITY (city_code),
     CONSTRAINT fk_favorite_store_code
         FOREIGN KEY (favorite_store_code) REFERENCES STORE (store_code)
 );
 
+
+COMMIT;
 
 -- ---------------------------------
 CREATE TABLE CLASSIFICATION
@@ -85,7 +90,7 @@ CREATE TABLE LANGUAGE
 
 CREATE TABLE ACTOR
 (
-    actor_code       NUMBER GENERATED ALWAYS AS IDENTITY,
+    actor_code       NUMBER GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
     actor_first_name VARCHAR2(50) NOT NULL,
     actor_last_name  VARCHAR2(50) NOT NULL,
     CONSTRAINT actor_code PRIMARY KEY (actor_code)
@@ -114,12 +119,20 @@ CREATE TABLE MOVIE
 );
 
 ALTER TABLE MOVIE
-    DROP COLUMN category_code;
+    DROP COLUMN classification_code;
+ALTER TABLE MOVIE
+    DROP COLUMN language_code;
+commit;
 
 ALTER TABLE MOVIE
     MODIFY movie_description varchar2(250);
 
-CREATE TABLE CATEGORY_DETAIL
+select *
+from MOVIE_ACTOR;
+RENAME MOVIE_ACTOR TO MOVIE_ACTOR;
+COMMIT;
+
+CREATE TABLE MOVIE_CATEGORY
 (
     movie_code    NUMBER NOT NULL,
     category_code NUMBER NOT NULL,
@@ -130,7 +143,28 @@ CREATE TABLE CATEGORY_DETAIL
 );
 
 
-CREATE TABLE MOVIE_DETAIL
+CREATE TABLE MOVIE_CLASSIFICATION
+(
+    movie_code          NUMBER NOT NULL,
+    classification_code NUMBER NOT NULL,
+    CONSTRAINT fk_movie_classification_movie
+        FOREIGN KEY (movie_code) REFERENCES MOVIE (movie_code),
+    CONSTRAINT fk_class_classification_movie
+        FOREIGN KEY (classification_code) REFERENCES CLASSIFICATION (classification_code)
+);
+
+CREATE TABLE MOVIE_LANGUAGE
+(
+    movie_code    NUMBER NOT NULL,
+    language_code NUMBER NOT NULL,
+    CONSTRAINT fk_movie_language_movie
+        FOREIGN KEY (movie_code) REFERENCES MOVIE (movie_code),
+    CONSTRAINT fk_lang_language_movie
+        FOREIGN KEY (language_code) REFERENCES LANGUAGE (language_code)
+);
+
+
+CREATE TABLE MOVIE_ACTOR
 (
     movie_code NUMBER NOT NULL,
     actor_code NUMBER NOT NULL,
@@ -169,8 +203,9 @@ CREATE TABLE EMPLOYEE
         FOREIGN KEY (store_code) REFERENCES STORE (store_code)
 );
 
+commit;
 --- RENT BILL
-CREATE TABLE RENTAL_BILL
+CREATE TABLE MOVIE_RENTAL
 (
     rental_code   NUMBER GENERATED ALWAYS AS IDENTITY,
     rental_date   DATE   NOT NULL,
@@ -185,17 +220,30 @@ CREATE TABLE RENTAL_BILL
 );
 
 -- MASTER - DETAIL BILL
-CREATE TABLE DETAIL_BILL
+CREATE TABLE RENTAL_RETAIL
 (
     rental_code NUMBER NOT NULL,
     movie_code  NUMBER NOT NULL,
     return_date DATE,
     rent_cost   NUMBER NOT NULL,
     CONSTRAINT rental_code_fk
-        FOREIGN KEY (rental_code) REFERENCES RENTAL_BILL (rental_code),
+        FOREIGN KEY (rental_code) REFERENCES MOVIE_RENTAL (rental_code),
     CONSTRAINT movie_code_fk
         FOREIGN KEY (movie_code) REFERENCES MOVIE (movie_code)
 );
 
+CREATE TABLE MANAGER
+(
+    manager_code       NUMBER GENERATED ALWAYS AS IDENTITY,
+    manager_first_name VARCHAR2(50) NOT NULL,
+    manager_last_name  VARCHAR2(50) NOT NULL,
+    store_code         NUMBER       NOT NULL,
+    CONSTRAINT manager_code_pk PRIMARY KEY (manager_code),
+    CONSTRAINT manager_store_code_fk
+        FOREIGN KEY (store_code) REFERENCES STORE (store_code)
+);
+
+select distinct client_first_name
+from CLIENT;
 
 
