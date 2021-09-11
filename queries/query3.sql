@@ -12,10 +12,6 @@
 SELECT distinct CLIENT.CLIENT_FIRST_NAME,
                 CLIENT.CLIENT_LAST_NAME,
                 M.MOVIE_TITLE
-                --MR.RENTAL_DATE,
-                --RD.RETURN_DATE,
-                --round((RD.RETURN_DATE - MR.RENTAL_DATE), 0) as difference,
-                --rd.RENT_DURATION                            as rent_legal_duration
 FROM CLIENT
         join MOVIE_RENTAL MR on CLIENT.CLIENT_CODE = MR.CLIENT_CODE
         join RENTAL_DETAIL RD on MR.RENTAL_CODE = RD.RENTAL_CODE
