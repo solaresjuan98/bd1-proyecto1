@@ -5,12 +5,11 @@
 
 select A.ACTOR_FIRST_NAME, A.ACTOR_LAST_NAME, MOVIE.RELEASE_YEAR
 from MOVIE
-    join MOVIE_DETAIL MD on MOVIE.MOVIE_CODE = MD.MOVIE_CODE
-    join ACTOR A on A.ACTOR_CODE = MD.ACTOR_CODE
+        join MOVIE_ACTOR ma on MOVIE.MOVIE_CODE = ma.MOVIE_CODE
+        join ACTOR A on A.ACTOR_CODE = ma.ACTOR_CODE
 where instr(MOVIE_DESCRIPTION, 'Crocodile') >= 1
     AND INSTR(MOVIE_DESCRIPTION, 'Shark') >= 1
 order by A.ACTOR_LAST_NAME;
-
 
 -- ============ HELP ============
 

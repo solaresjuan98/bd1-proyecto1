@@ -174,17 +174,18 @@ CREATE TABLE MOVIE_ACTOR
         FOREIGN KEY (actor_code) REFERENCES ACTOR (actor_code)
 );
 
-CREATE TABLE STORE_INVENTORY
+CREATE TABLE MOVIE_INVENTORY
 (
-    movie_code          NUMBER NOT NULL,
-    store_code          NUMBER NOT NULL,
-    available_inventory NUMBER NOT NULL,
+    movie_code NUMBER NOT NULL,
+    store_code NUMBER NOT NULL,
+    --available_inventory NUMBER NOT NULL,
     CONSTRAINT fk_movie_inv
         FOREIGN KEY (movie_code) REFERENCES MOVIE (movie_code),
     CONSTRAINT fk_store_inv
         FOREIGN KEY (store_code) REFERENCES STORE (store_code)
 );
-
+select *
+from MOVIE_INVENTORY;
 -- ---------------------------
 
 CREATE TABLE EMPLOYEE
@@ -203,15 +204,15 @@ CREATE TABLE EMPLOYEE
         FOREIGN KEY (store_code) REFERENCES STORE (store_code)
 );
 
-commit;
---- RENT BILL
+--- MOVIE_RENTAL
 CREATE TABLE MOVIE_RENTAL
 (
-    rental_code   NUMBER GENERATED ALWAYS AS IDENTITY,
+    rental_code   NUMBER GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
     rental_date   DATE   NOT NULL,
     pay_date      DATE   NOT NULL,
     client_code   NUMBER NOT NULL,
     employee_code NUMBER NOT NULL,
+    mount_to_pay  NUMBER NOT NULL,
     CONSTRAINT rental_bill_code_pk PRIMARY KEY (rental_code),
     CONSTRAINT fk_bill_client_code
         FOREIGN KEY (client_code) REFERENCES CLIENT (client_code),
@@ -219,8 +220,30 @@ CREATE TABLE MOVIE_RENTAL
         FOREIGN KEY (employee_code) REFERENCES EMPLOYEE (employee_code)
 );
 
--- MASTER - DETAIL BILL
-CREATE TABLE RENTAL_RETAIL
+-- RENTAL_DETAIL
+CREATE TABLE RENTAL_DETAIL
+(
+    rental_code   NUMBER NOT NULL,
+    movie_code    NUMBER NOT NULL,
+    return_date   DATE,
+    rent_cost     NUMBER NOT NULL,
+    rent_duration NUMBER NOT NULL,
+    CONSTRAINT rental_code_fk
+        FOREIGN KEY (rental_code) REFERENCES MOVIE_RENTAL (rental_code),
+    CONSTRAINT movie_code_fk
+        FOREIGN KEY (movie_code) REFERENCES MOVIE (movie_code)
+);
+commit ;
+drop table RENTAL_DETAIL;
+drop table MOVIE_RENTAL;
+commit ;
+
+select *
+from RENTAL_DETAIL;
+select count(*)
+from MOVIE_RENTAL;
+
+/*CREATE TABLE RENTAL_RETAIL
 (
     rental_code NUMBER NOT NULL,
     movie_code  NUMBER NOT NULL,
@@ -230,7 +253,7 @@ CREATE TABLE RENTAL_RETAIL
         FOREIGN KEY (rental_code) REFERENCES MOVIE_RENTAL (rental_code),
     CONSTRAINT movie_code_fk
         FOREIGN KEY (movie_code) REFERENCES MOVIE (movie_code)
-);
+);*/
 
 CREATE TABLE MANAGER
 (

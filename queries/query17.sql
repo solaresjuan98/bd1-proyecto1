@@ -2,22 +2,20 @@
 películas para las ciudades que obtuvieron más rentas que la ciudad
 “Dayton”.*/
 
-SELECT DISTINCT CITY.CITY_NAME, count(*) as city_count
+SELECT CITY.CITY_NAME, count(*) as city_count
 FROM CITY
-    JOIN COUNTRY C2 on C2.COUNTRY_CODE = CITY.FK_COUNTRY_CODE
-    join ADDRESS A2 on CITY.CITY_CODE = A2.FK_CITY_CODE
-    join CLIENT C3 on A2.ADDRESS_CODE = C3.ADDRESS_CODE
-    join RENTAL_BILL RB on C3.CLIENT_CODE = RB.CLIENT_CODE
+        join COUNTRY CN on CN.COUNTRY_CODE = CITY.FK_COUNTRY_CODE
+        join CLIENT CL on CL.CLIENT_CITY_CODE = CITY.CITY_CODE
+        join MOVIE_RENTAL MR on CL.CLIENT_CODE = MR.CLIENT_CODE
 where COUNTRY_NAME = 'United States'
-having count(*) > (
+HAVING count(*) > (
     SELECT count(*) as city_count
-FROM CITY
-    JOIN COUNTRY C2 on C2.COUNTRY_CODE = CITY.FK_COUNTRY_CODE
-    join ADDRESS A2 on CITY.CITY_CODE = A2.FK_CITY_CODE
-    join CLIENT C3 on A2.ADDRESS_CODE = C3.ADDRESS_CODE
-    join RENTAL_BILL RB on C3.CLIENT_CODE = RB.CLIENT_CODE
-where COUNTRY_NAME = 'United States'
-    AND CITY_NAME = 'Dayton'
+    FROM CITY
+            join COUNTRY C2 on C2.COUNTRY_CODE = CITY.FK_COUNTRY_CODE
+            join CLIENT C3 on CITY.CITY_CODE = C3.CLIENT_CITY_CODE
+            join MOVIE_RENTAL M on C3.CLIENT_CODE = M.CLIENT_CODE
+    where C2.COUNTRY_NAME = 'United States'
+    and CITY_NAME = 'Dayton'
 )
 group by CITY.CITY_NAME;
 
