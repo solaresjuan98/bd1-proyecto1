@@ -11,10 +11,10 @@ where COUNTRY_NAME = 'United States'
 HAVING count(*) > (
     SELECT count(*) as city_count
     FROM CITY
-            join COUNTRY C2 on C2.COUNTRY_CODE = CITY.FK_COUNTRY_CODE
-            join CLIENT C3 on CITY.CITY_CODE = C3.CLIENT_CITY_CODE
-            join MOVIE_RENTAL M on C3.CLIENT_CODE = M.CLIENT_CODE
-    where C2.COUNTRY_NAME = 'United States'
+        join COUNTRY C2 on C2.COUNTRY_CODE = CITY.FK_COUNTRY_CODE
+        join CLIENT C3 on CITY.CITY_CODE = C3.CLIENT_CITY_CODE
+        join MOVIE_RENTAL M on C3.CLIENT_CODE = M.CLIENT_CODE
+where C2.COUNTRY_NAME = 'United States'
     and CITY_NAME = 'Dayton'
 )
 group by CITY.CITY_NAME;

@@ -4,4 +4,5 @@
 select ACTOR_FIRST_NAME || ' ' || ACTOR_LAST_NAME as actor_complete_name
 from ACTOR
 where (SELECT INSTR(ACTOR.ACTOR_LAST_NAME, 'son')
-from dual) >= 1;
+from dual) >= 1
+order by ACTOR_FIRST_NAME;
