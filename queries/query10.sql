@@ -19,3 +19,25 @@ UNION
         AND ACTOR.ACTOR_CODE
 NOT IN 8;
 
+
+-- ==== Correction
+
+select names, last_names
+FROM (
+        select ACTOR_FIRST_NAME as names, ACTOR_LAST_NAME as last_names
+        from ACTOR
+        union
+        select CLIENT_FIRST_NAME as names, CLIENT_LAST_NAME as last_names
+        from CLIENT
+    )
+        inner join
+    (
+        select ACTOR.ACTOR_FIRST_NAME as actor_name, ACTOR.ACTOR_LAST_NAME as last_name_act
+        from ACTOR
+        where ACTOR.ACTOR_FIRST_NAME LIKE 'Matthew'
+        and ACTOR.ACTOR_LAST_NAME LIKE 'Johansson'
+    ) on names = actor_name
+where last_names <> last_name_act;
+
+
+

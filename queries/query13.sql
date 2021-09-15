@@ -1,12 +1,20 @@
+/*
+    13.Mostrar el nombre del país, nombre del cliente y número de películas
+    rentadas de todos los clientes que rentaron más películas por país. Si el
+    número de películas máximo se repite, mostrar todos los valores que
+    representa el máximo.
+*/
+
+
 SELECT distinct CNTRY.COUNTRY_NAME,
                 c2.CLIENT_FIRST_NAME,
                 count(*)
 FROM MOVIE_RENTAL
-         JOIN CLIENT C2 on C2.CLIENT_CODE = MOVIE_RENTAL.CLIENT_CODE
-         JOIN CITY CTY on CTY.CITY_CODE = c2.CLIENT_CITY_CODE
-         JOIN COUNTRY CNTRY on CNTRY.COUNTRY_CODE = CTY.FK_COUNTRY_CODE
+        JOIN CLIENT C2 on C2.CLIENT_CODE = MOVIE_RENTAL.CLIENT_CODE
+        JOIN CITY CTY on CTY.CITY_CODE = c2.CLIENT_CITY_CODE
+        JOIN COUNTRY CNTRY on CNTRY.COUNTRY_CODE = CTY.FK_COUNTRY_CODE
 GROUP BY CNTRY.COUNTRY_NAME,
-         c2.CLIENT_FIRST_NAME;
+        c2.CLIENT_FIRST_NAME;
 --c2.CLIENT_LAST_NAME;
 
 
