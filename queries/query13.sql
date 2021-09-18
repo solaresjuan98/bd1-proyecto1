@@ -5,63 +5,60 @@
     representa el máximo.
 */
 
+select mov_rental.CLIENT_CODE,
+    clnt.CLIENT_FIRST_NAME,
+    clnt.CLIENT_LAST_NAME,
+    cntry.COUNTRY_NAME,
+    count(*) as rentals
+from MOVIE_RENTAL mov_rental
+    join CLIENT clnt on clnt.CLIENT_CODE = mov_rental.CLIENT_CODE
+    join CITY cty on cty.CITY_CODE = clnt.CLIENT_CITY_CODE
+    join COUNTRY cntry on cntry.COUNTRY_CODE = cty.FK_COUNTRY_CODE
+group by mov_rental.CLIENT_CODE, clnt.CLIENT_FIRST_NAME, clnt.CLIENT_LAST_NAME, cntry.COUNTRY_NAME;
 
-SELECT distinct CNTRY.COUNTRY_NAME,
-                c2.CLIENT_FIRST_NAME,
-                count(*)
-FROM MOVIE_RENTAL
-        JOIN CLIENT C2 on C2.CLIENT_CODE = MOVIE_RENTAL.CLIENT_CODE
-        JOIN CITY CTY on CTY.CITY_CODE = c2.CLIENT_CITY_CODE
-        JOIN COUNTRY CNTRY on CNTRY.COUNTRY_CODE = CTY.FK_COUNTRY_CODE
-GROUP BY CNTRY.COUNTRY_NAME,
-        c2.CLIENT_FIRST_NAME;
---c2.CLIENT_LAST_NAME;
-
-
-
--- query 1
-SELECT distinct CNTRY.COUNTRY_NAME,
-                c2.CLIENT_FIRST_NAME,
-                c2.CLIENT_LAST_NAME,
-                count(*)
-FROM MOVIE_RENTAL
-         JOIN CLIENT C2 on C2.CLIENT_CODE = MOVIE_RENTAL.CLIENT_CODE
-         JOIN CITY CTY on CTY.CITY_CODE = c2.CLIENT_CITY_CODE
-         JOIN COUNTRY CNTRY on CNTRY.COUNTRY_CODE = CTY.FK_COUNTRY_CODE
-GROUP BY CNTRY.COUNTRY_NAME,
-         c2.CLIENT_FIRST_NAME,
-         c2.CLIENT_LAST_NAME;
-
-
-
--- query 2
-select COUNTRY_NAME, max(rented_movies) as max_num_rented_movies_client
-from Example_view
---join CLIENT C2 on EXAMPLE_VIEW.CLIENT_FIRST_NAME = C2.CLIENT_FIRST_NAME
+select COUNTRY_NAME as country, max(rentals) as max_rentals
+from (
+         select mov_rental.CLIENT_CODE,
+        clnt.CLIENT_FIRST_NAME,
+        clnt.CLIENT_LAST_NAME,
+        cntry.COUNTRY_NAME,
+        count(*) as rentals
+    from MOVIE_RENTAL mov_rental
+        join CLIENT clnt on clnt.CLIENT_CODE = mov_rental.CLIENT_CODE
+        join CITY cty on cty.CITY_CODE = clnt.CLIENT_CITY_CODE
+        join COUNTRY cntry on cntry.COUNTRY_CODE = cty.FK_COUNTRY_CODE
+    group by mov_rental.CLIENT_CODE, clnt.CLIENT_FIRST_NAME, clnt.CLIENT_LAST_NAME, cntry.COUNTRY_NAME
+     )
 group by COUNTRY_NAME;
-
-select *
-from COUNTRY;
 
 
 -- final query
-SELECT distinct CNTRY.COUNTRY_NAME,
-                c2.CLIENT_FIRST_NAME,
-                c2.CLIENT_LAST_NAME,
-                count(*)
-FROM MOVIE_RENTAL
-         JOIN CLIENT C2 on C2.CLIENT_CODE = MOVIE_RENTAL.CLIENT_CODE
-         JOIN CITY CTY on CTY.CITY_CODE = c2.CLIENT_CITY_CODE
-         JOIN COUNTRY CNTRY on CNTRY.COUNTRY_CODE = CTY.FK_COUNTRY_CODE
-         JOIN EXAMPLE_VIEW EV on CNTRY.COUNTRY_NAME = EV.COUNTRY_NAME
---where CNTRY.COUNTRY_NAME = ev.COUNTRY_NAME
-having count(*) in (
-    select max(rented_movies) as max_num_rented_movies
-    from Example_view
-    group by COUNTRY_NAME
-)
-GROUP BY CNTRY.COUNTRY_NAME,
-         c2.CLIENT_FIRST_NAME,
-         c2.CLIENT_LAST_NAME;
-
-
+select t1.country, t2.CLIENT_FIRST_NAME, t2.CLIENT_LAST_NAME, t1.max_rentals
+from (
+        select COUNTRY_NAME as country, max(rentals) as max_rentals
+    from (
+        select mov_rental.CLIENT_CODE,
+            clnt.CLIENT_FIRST_NAME,
+            clnt.CLIENT_LAST_NAME,
+            cntry.COUNTRY_NAME,
+            count(*) as rentals
+        from MOVIE_RENTAL mov_rental
+            join CLIENT clnt on clnt.CLIENT_CODE = mov_rental.CLIENT_CODE
+            join CITY cty on cty.CITY_CODE = clnt.CLIENT_CITY_CODE
+            join COUNTRY cntry on cntry.COUNTRY_CODE = cty.FK_COUNTRY_CODE
+        group by mov_rental.CLIENT_CODE, clnt.CLIENT_FIRST_NAME, clnt.CLIENT_LAST_NAME, cntry.COUNTRY_NAME
+    )
+    group by COUNTRY_NAME) t1,
+    (select mov_rental.CLIENT_CODE,
+        clnt.CLIENT_FIRST_NAME,
+        clnt.CLIENT_LAST_NAME,
+        cntry.COUNTRY_NAME,
+        count(*) as rentals
+    from MOVIE_RENTAL mov_rental
+        join CLIENT clnt on clnt.CLIENT_CODE = mov_rental.CLIENT_CODE
+        join CITY cty on cty.CITY_CODE = clnt.CLIENT_CITY_CODE
+        join COUNTRY cntry on cntry.COUNTRY_CODE = cty.FK_COUNTRY_CODE
+    group by mov_rental.CLIENT_CODE, clnt.CLIENT_FIRST_NAME, clnt.CLIENT_LAST_NAME, cntry.COUNTRY_NAME) t2
+where t2.rentals = t1.max_rentals
+    and t2.COUNTRY_NAME = t1.country
+order by t1.country;
