@@ -2,23 +2,26 @@
 -- ejemplo: si el país tiene 3 ciudades, se deben sumar todas las rentas de la
 -- ciudad y dividirlo dentro de tres (número de ciudades del país).
 
+select table_1.COUNTRY_NAME,
+        table_1.CITY_NAME,
+        table_1.rentals_num,
+        table_2.total_cities,
+        round((table_1.rentals_num / table_2.total_cities), 3) avg_rent_rate
+from (
+         select cntry.COUNTRY_NAME, cty.CITY_NAME, count(*) rentals_num
+        from COUNTRY cntry
+                join CITY cty on cntry.COUNTRY_CODE = cty.FK_COUNTRY_CODE
+                join CLIENT cli on cty.CITY_CODE = cli.CLIENT_CITY_CODE
+                join MOVIE_RENTAL MR on cli.CLIENT_CODE = MR.CLIENT_CODE
+        group by cntry.COUNTRY_NAME, cty.CITY_NAME
+) table_1
+        join (
+    select COUNTRY_NAME, count(*) total_cities
+        from COUNTRY cntry
+                join CITY cty on cntry.COUNTRY_CODE = cty.FK_COUNTRY_CODE
+        group by COUNTRY_NAME
+) table_2 on table_1.COUNTRY_NAME = table_2.COUNTRY_NAME
+group by table_1.COUNTRY_NAME, table_1.CITY_NAME, table_1.rentals_num, table_2.total_cities
+order by table_1.COUNTRY_NAME;
 
--- get total of rentals by city [NOT FINISHED YET]
-select distinct cntry.COUNTRY_NAME,
-                c2.CITY_NAME,
-                count(CITY_NAME)                                                       as num_rentas,
-                SUM(COUNT(distinct COUNTRY_NAME)) over ()                              AS total_count,
-                round(count(CITY_NAME) / SUM(COUNT(distinct COUNTRY_NAME)) over (), 2) as avg_rents_by_city
-from COUNTRY cntry
-        join CITY C2 on cntry.COUNTRY_CODE = C2.FK_COUNTRY_CODE
-        join CLIENT C3 on C2.CITY_CODE = C3.CLIENT_CITY_CODE
-        join MOVIE_RENTAL MR on C3.CLIENT_CODE = MR.CLIENT_CODE
-where cntry.COUNTRY_NAME = 'United States'
-group by cntry.COUNTRY_NAME, c2.CITY_NAME;
 
-
--- get number of cities of a country
-select distinct COUNTRY_NAME, count(c2.CITY_NAME)
-from COUNTRY
-        join CITY C2 on COUNTRY.COUNTRY_CODE = C2.FK_COUNTRY_CODE
-group by COUNTRY_NAME;
