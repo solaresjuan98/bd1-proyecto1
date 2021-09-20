@@ -1,3 +1,10 @@
 *csv
 bad
 log
+data_modeler/
+data_modeler/logical.dmd
+data_modeler/logical/logical/Logical.xml
+data_modeler/logical/logical/subviews/8E55888A-AE34-6EE1-8EB8-44215FB02CE0.xml
+data_modeler/logical/mapping/DeletedMap_RMC34E28F1-0B37-BA12-4477-3E9D6703CE84.xml
+data_modeler/logical/rel/C34E28F1-3E9D6703CE84.xml
+data_modeler/logical/rel/C34E28F1-3E9D6703CE84/subviews/6E1438F5-AF9A-E2B9-B2B4-A529B743324B.xml
